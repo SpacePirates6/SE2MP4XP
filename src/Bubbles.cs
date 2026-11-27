@@ -483,9 +483,16 @@ internal static class ClipmapCameraPatch
     }
 
     [HarmonyPrefix]
-    private static void Prefix(Keen.VRage.Voxels.Client.Clipmap.VoxelClipmap clipmap, ref bool moveUpdate, ref WorldTransform camera)
+    private static bool Prefix(Keen.VRage.Voxels.Client.Clipmap.VoxelClipmap clipmap, ref bool moveUpdate, ref WorldTransform camera, ref bool __result)
     {
-        if (!Bubbles.Ready || !GlobalRender.HaveCamera) return;
+        // Hidden clipmaps (e.g. suppressed deep-space _ClientComposition placeholders) must not run VoxelClipmap.Update
+        // every frame — otherwise they churn 10,000+ ringRemove/sec and starve the voxel workers and in-process server.
+        if (!clipmap.Visible)
+        {
+            __result = false;
+            return false;
+        }
+        if (!Bubbles.Ready || !GlobalRender.HaveCamera) return true;
         if (!Bubbles.ClipmapBubble.TryGetValue(clipmap, out Bubbles.Bubble? b) || b.IsIdentity)
         {
             // Global-space moving asteroids: throttle moveUpdate for distant clipmaps (>1.5 km) so 100+ orbiting rocks
@@ -516,11 +523,11 @@ internal static class ClipmapCameraPatch
                     }
                 }
             }
-            return;
+            return true;
         }
-        if (!Bubbles.ClipmapRender.TryGetValue(clipmap, out var render)) return;
+        if (!Bubbles.ClipmapRender.TryGetValue(clipmap, out var render)) return true;
         WorldTransform localCamera = GlobalRender.LocalCamera;
-        if (Bubbles.BubbleAt(localCamera.Position) != b) return;          // camera not in this planet's grid
+        if (Bubbles.BubbleAt(localCamera.Position) != b) return true;          // camera not in this planet's grid
 
         // Rebuild view in double precision against the clipmap's current _localToWorld (already updated by BubbleClipmapMoveJob).
         WorldTransform centredLocal = Bubbles.InitialCentred.TryGetValue(render, out WorldTransform initC) ? initC : render._voxelStorageComponent.ComputeCenteredTransform();
@@ -561,5 +568,6 @@ internal static class ClipmapCameraPatch
         {
             lock (LastLocalPos) LastLocalPos[clipmap] = localCamera.Position;
         }
+        return true;
     }
 }

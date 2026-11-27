@@ -394,11 +394,16 @@ internal static class MovableAsteroids
                     {
                         foreach (Bubbles.Bubble b in Bubbles.All)
                         {
-                            double bubbleGuard = b.Radius * 1.0125; // 1.6 * 1.0125 = 1.62 R (strictly outside the bubble)
+                            double bubbleGuard = b.Radius * 1.0125; // strictly outside the planet bubble
                             if ((at - b.C0).Length() < bubbleGuard || (at - Bubbles.Centre(b, Bubbles.T)).Length() < bubbleGuard)
                                 return;
                         }
                     }
+                    // Client-only procedural placeholders in global space are hidden by Bubbles.RenderAddedPatch so
+                    // real orbiting server asteroids take over — don't waste kinematic Havok bodies on them either.
+                    if (isClient && OrbitalBelts.On && Settings.BeltsSuppressVanilla &&
+                        entName.Contains("_ClientComposition", StringComparison.Ordinal))
+                        return;
                 }
 
                 IPhysics physics = ((RigidBodyComponent)__instance)._physics;

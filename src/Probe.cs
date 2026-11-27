@@ -297,7 +297,7 @@ internal static class Settings
     internal static readonly bool Audit = Str("audit", "0") == "1";
     internal static readonly bool AuditClient = Str("audit_client", "0") == "1";
     internal static readonly bool ClipDiag = Str("clipdiag", "1") == "1";
-    internal static readonly double FrameRadiusFactor = Num("frame_radius", 1.6);
+    internal static readonly double FrameRadiusFactor = Num("frame_radius", 1.25);
     // Movable asteroids (MovableAsteroids.cs): procedural asteroids up to this size in metres get one dynamic body. 0 = off.
     internal static readonly double MovableAsteroidMax = Num("movable_asteroid_max", 0);
     internal static readonly double AsteroidDensity = Num("asteroid_density", 2700);
@@ -323,7 +323,7 @@ internal static class Settings
     internal static readonly double StarPeriod = Num("star_period", 14400);
     // Stage 4.2 (OrbitalBelts.cs): deterministic orbiting asteroid belts (radii in planet radii for the home belt).
     internal static readonly bool OrbitalBelts = Num("orbital_belts", 0) != 0;
-    internal static readonly double BeltInner = Num("belt_inner", 2.5);
+    internal static readonly double BeltInner = Num("belt_inner", 1.5);
     internal static readonly double BeltOuter = Num("belt_outer", 4.5);
     internal static readonly int BeltHomeCount = (int)Num("belt_home_count", 300);
     internal static readonly int BeltStarCount = (int)Num("belt_star_count", 500);
