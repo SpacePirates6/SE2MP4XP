@@ -1,0 +1,21 @@
+<Project>
+
+  <!-- Shared settings for every project in the repo.
+       Game2 = the folder with the game's managed DLLs (…\SpaceEngineers2\Game2).
+       Override on the command line: dotnet build -p:Game2="D:\path\to\SpaceEngineers2\Game2" -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- CS8509: the game's serializer generator emits partial switches over SerializerFormat.
+         CA1416: SpaceEngineers2.dll is marked Windows-only; this plugin only runs there. -->
+    <NoWarn>$(NoWarn);CS1591;CS8509;MSB3277;MSB3243;CA1416</NoWarn>
+    <Game2 Condition="'$(Game2)' == '' AND '$(GAME2_DIR)' != ''">$(GAME2_DIR)</Game2>
+    <Game2 Condition="'$(Game2)' == ''">D:\SteamLibrary\steamapps\common\SpaceEngineers2\Game2</Game2>
+  </PropertyGroup>
+
+</Project>

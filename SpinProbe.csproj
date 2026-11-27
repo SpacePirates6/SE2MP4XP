@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- SE2 client plugin. Loaded by the game's PluginHost from a launch option:
+         -plugins:"<full path>\ChildlessParents.dll"
+       PluginHost takes the first non-abstract IPlugin type in the assembly and
+       calls its constructor with the host, before the engine exists. -->
+
+  <PropertyGroup>
+    <AssemblyName>ChildlessParents</AssemblyName><!-- same bundle/assembly name as the old plugin: the test saves list bundle "ChildlessParents" -->
+    <RootNamespace>SpinProbe</RootNamespace>
+    <Version>0.1.0</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- The DCS / Library source generators read these, exactly like a .vrgproj mod does. -->
+    <VRageBundleName>ChildlessParents</VRageBundleName>
+    <VRageBundleVersion>0.1.0.0</VRageBundleVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="VRageBundleName" />
+    <CompilerVisibleProperty Include="VRageBundleVersion" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
+    <!-- Compile-time access to engine internals (rewrites only the reference assemblies the
+         compiler sees and adds IgnoresAccessChecksTo). Nothing is shipped. -->
+    <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all" />
+    <Publicize Include="VRage.Voxels" />
+    <Publicize Include="VRage.Core.Game" />
+    <Publicize Include="VRage.DCS" />
+    <Publicize Include="VRage.Physics" />
+    <Publicize Include="SpaceEngineers2" />
+    <Publicize Include="Game2.Simulation" />
+    <Publicize Include="VRage.Voxels.Client" />
+    <Publicize Include="VRage.Render" />
+    <Publicize Include="VRage.Render12" />
+    <Publicize Include="Game2.Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Game assemblies: compile against, never copy. The full closure is required so the
+         VRage.Library generator stamps the plugin with the same metadata dependencies as the
+         game's root context; a partial closure makes PluginHost reject the plugin. -->
+    <GameAsm Include="SpaceEngineers2;
+                     Game2.Client;
+                     Game2.ContentBuilder;
+                     Game2.Game;
+                     Game2.Simulation;
+                     VRage.AI;
+                     VRage.Analytics;
+                     VRage.Animation.Client;
+                     VRage.Audio;
+                     VRage.Client.ContentBuilder;
+                     VRage.Client;
+                     VRage.ContentPipeline.Builder.Plugin;
+                     VRage.Core;
+                     VRage.Core.Game;
+                     VRage.DCS;
+                     VRage.Game.Client;
+                     VRage.Game;
+                     VRage.Input;
+                     VRage.Library;
+                     VRage.Multiplayer;
+                     VRage.Physics.Client;
+                     VRage.Physics;
+                     VRage.Platform.Windows;
+                     VRage.Render;
+                     VRage.Render12;
+                     VRage.Scripting;
+                     VRage.Steam;
+                     VRage.UI;
+                     VRage.UI.Shared;
+                     VRage.Voxels.Client;
+                     VRage.Voxels;
+                     VRage.Water.Client;
+                     VRage.Water" />
+    <Reference Include="@(GameAsm)" HintPath="$(Game2)/%(Identity).dll" Private="false" />
+    <Reference Include="Steamworks.NET" HintPath="$(Game2)/Steamworks.NET.dll" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Analyzer Include="$(Game2)/VRage.CodeAnalysis.dll" />
+    <Analyzer Include="$(Game2)/VRage.DCS.Generator.dll" />
+    <Analyzer Include="$(Game2)/VRage.Library.Generator.dll" />
+  </ItemGroup>
+
+</Project>

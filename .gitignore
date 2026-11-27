@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.deps.json
+
+# Runtime / test runs / logs / local configs
+live/
+runs/
+*.log
+*.ini
+asteroid-store/
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store
